@@ -1,8 +1,6 @@
 from bs4 import BeautifulSoup
 html = open('Max.html', 'r')
 soup = BeautifulSoup(html, 'html.parser')
-if len(soup.find_all('div', class_='display-flex ph5 pv3')) > 0:
-    About = soup.find_all('div', class_='display-flex ph5 pv3')[0].get_text()
 
 Sections = soup.find_all(
     'section', class_='artdeco-card ember-view relative break-words pb3 mt2')

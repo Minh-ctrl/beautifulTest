@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import json
-html = open('Miki.html', 'r')
+html = open('Tuan.html', 'r')
 soup = BeautifulSoup(html, 'html.parser')
 Sections = soup.find_all(
     'section', class_='artdeco-card ember-view relative break-words pb3 mt2')
 relInfo = {}
 experiences = {}
 Languages = {}
+Educations = {}
 Skills = []
+
 for x in Sections:
     if "About" in x.find('div', class_='pvs-header__top-container--no-stack').get_text():
         aboutOuter = x.find(
@@ -55,7 +57,7 @@ for x in Sections:
             'Experiences': experiences
         })
 
-    if "Volunteering" in x.get_text(strip=True):
+    if "Volunteering" in x.find('div', class_='pvs-header__top-container--no-stack').get_text():
         relInfo.update({
             'Volunteer': x.get_text(strip=True)
         })
@@ -68,7 +70,7 @@ for x in Sections:
         relInfo.update({
             'Skills': Skills
         })
-    if "Languages" in x.get_text():
+    if "Languages" in x.find('div', class_='pvs-header__top-container--no-stack').get_text():
         languages = x.find_all('div', class_='display-flex align-items-center')
         levels = x.find_all('span', class_='t-14 t-normal t-black--light')
         for f, b in zip(languages, levels):
@@ -78,6 +80,23 @@ for x in Sections:
         relInfo.update({
             'Languages': Languages
         })
+    if "Education" in x.find('div', class_='pvs-header__top-container--no-stack').get_text():
+        Schools = x.find_all('div', class_='display-flex align-items-center')
+        # Periods = x.find_all('span', class_='t-14 t-normal t-black--light')
+        Types = x.find_all('span', class_='t-14 t-normal')
+        for f, b in zip(Schools, Types):
+            schools = f.find('span', class_='mr1 hoverable-link-text t-bold')
+            school = schools.find('span', class_='visually-hidden')
+            Type = b.find('span', class_='visually-hidden')
+            Educations.update({school.get_text(): Type.get_text()})
+        relInfo.update({
+            'Educations': Educations
+        })
+        #         # clean repeatable
+        #         company = f.find('span', class_='visually-hidden')
+        #         title = b.find('span', class_='visually-hidden')
+        #         experience = company.get_text() + ' ' + title.get_text()
+        #         experiences.update({company.get_text(): title.get_text()})
 res = json.dumps(relInfo, ensure_ascii=False)
 file = open("test.json", "w")
 file.write(res)

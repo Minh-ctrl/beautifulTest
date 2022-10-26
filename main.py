@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import json
-html = open('Anh.html', 'r')
+html = open('Hai.html', 'r')
 soup = BeautifulSoup(html, 'html.parser')
 Sections = soup.find_all(
     'section', class_='artdeco-card ember-view relative break-words pb3 mt2')
@@ -43,7 +43,9 @@ for x in Sections:
                     job = title.find('span', class_='visually-hidden')
                     jobs.append(job.get_text())
                     print(title.get_text())
-                experiences.update({Company: jobs})
+#       very lazy workaround
+                popped = jobs.pop(0)
+                experiences.update({popped: jobs})
             else:
                 for title in Titles:
                     job = title.find(

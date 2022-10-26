@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import json
-html = open('Hai.html', 'r')
+html = open('Miki.html', 'r')
 soup = BeautifulSoup(html, 'html.parser')
 Sections = soup.find_all(
     'section', class_='artdeco-card ember-view relative break-words pb3 mt2')
@@ -10,9 +10,9 @@ experiences = {}
 Languages = {}
 Skills = []
 for x in Sections:
-    if "About" in x.get_text():
+    if "About" in x.find('div', class_='pvs-header__top-container--no-stack').get_text():
         aboutOuter = x.find(
-            'div', class_='inline-show-more-text inline-show-more-text--is-collapsed')
+            'div', class_='inline-show-more-text')
         about = aboutOuter.find('span', class_="visually-hidden")
         relInfo.update({
             'About': about.get_text()
@@ -35,14 +35,14 @@ for x in Sections:
         for block in blocks:
             Titles = block.find_all(
                 'div', class_='display-flex align-items-center')
-            Companies = block.find('span', class_='t-14 t-normal')
-            Company = Companies.get_text()
+            Companies = block.find_all('span', class_='t-14 t-normal')
+            # Company = Companies.get_text()
+            for company in Companies:
+                name = company.find('span', class_='visually-hidden')
             if len(Titles) > 1:
                 for title in Titles:
-                    # print(title.get_text())
                     job = title.find('span', class_='visually-hidden')
                     jobs.append(job.get_text())
-                    print(title.get_text())
 #       very lazy workaround
                 popped = jobs.pop(0)
                 experiences.update({popped: jobs})
@@ -50,7 +50,7 @@ for x in Sections:
                 for title in Titles:
                     job = title.find(
                         'span', class_='visually-hidden').get_text()
-                    experiences.update({Company: job})
+                    experiences.update({name.get_text(): job})
         relInfo.update({
             'Experiences': experiences
         })
